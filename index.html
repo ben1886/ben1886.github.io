@@ -33,53 +33,172 @@
         theChuck.startListeningForEvent("done", doneCallback);
         theChuck.startListeningForEvent("save", saveCallback);
         theChuck.runCode(`
-            global Event done;
-            global Event save;
-            global Event keypressed;
-            global float total;
-            global float total2;
-            global float total3;
-            SinOsc sin => dac;
+          /* Play a sine wave at 440Hz for 1 week */
+SinOsc osc1 => dac;
+330 => osc1.freq;
 
-            220 => sin.freq;
+SinOsc osc2 => dac;
+660 => osc2.freq;
 
-            int counter2;
-            int counter3;
+global Event sectionone;
+global Event sectiontwo;
+global Event sectionthree;
+global Event KeyO;
+global Event KeyE;
+time O[0];
+time E[0];
+int counterleft1;
+int counterright1;
+int counterleft2;
+int counterright2;
+int counterleft3;
+int counterright3;
+float resultleft1;
+float resultleft2;
+float resultleft3;
+float resultright1;
+float resultright2;
+float resultright3;
 
-            function float test(int ref){
+fun void one(){
+   repeat(30){
+   1 => osc1.gain;
+   .2::second => now;
+   0 => osc1.gain;
+   .2::second => now;
+   } 
+   
+}
 
-            int counter;
-            time times[0];
-            float t;
+fun void two(){
+   repeat(20){
+   1 => osc2.gain;
+   .3::second => now;
+   0 => osc2.gain;
+   .3::second => now;
+   } 
+}
 
-              repeat(8){
-                1 => sin.gain;
-                ref::ms => now;
-                0 => sin.gain;
-                ref::ms => now;
-              }
+fun void oneA(){
+   repeat(20){
+   1 => osc1.gain;
+   .15::second => now;
+   0 => osc1.gain;
+   .15::second => now;
+   }  
+}
 
-              while(counter < 16){
-                times << now;
-                keypressed => now;
-                times << now;
-                counter++;
-              }
+fun void twoB(){
+   repeat(10){
+   1 => osc2.gain;
+   .3::second => now;
+   0 => osc2.gain;
+   .3::second => now;
+   } 
+}
 
-              for(int i; i < times.size(); i + 2 => i){
-                (times[i+1]-times[i])/samp +=> t;
-              }
-              t/32.0 => t;
-              return t;
-            }
+fun void oneC(){
+   repeat(20){
+   1 => osc1.gain;
+   .3::second => now;
+   0 => osc1.gain;
+   .3::second => now;
+   } 
+}
 
-            test(417) => total;
-            test(750) => total2;
-            test(250) => total3;
+fun void twoD(){
+   repeat(15){
+   1 => osc2.gain;
+   .4::second => now;
+   0 => osc2.gain;
+   .4::second => now;
+   } 
+}
 
-            done.broadcast();
-            second => now;
-            save.broadcast();
+fun void lefthandfirstexercise(){
+ while(counterleft1 < 16){
+    E << now;
+    KeyE => now;
+    E << now;
+    counterleft1++;
+    }
+}
+
+fun void righthandfirstexercise(){
+ while(counterright1 < 16){
+    O << now;
+    KeyO => now;
+    O << now;
+    counterright1++;
+    }
+    sectionone.broadcast();
+}
+
+fun void lefthandsecondexercise(){
+ while(counterleft2 < 16){
+    E << now;
+    KeyE => now;
+    E << now;
+    counterleft2++;
+    }
+}
+
+fun void righthandsecondexercise(){
+ while(counterright2 < 16){
+    O << now;
+    KeyO => now;
+    O << now;
+    counterright2++;
+    }
+     sectiontwo.broadcast();
+}
+
+fun void lefthandthirdexercise(){
+ while(counterleft3 < 16){
+    E << now;
+    KeyE => now;
+    E << now;
+    counterleft3++;
+    }
+}
+
+fun void righthandthirdexercise(){
+ while(counterright3 < 16){
+    O << now;
+    KeyO => now;
+    O << now;
+    counterright3++;
+    }
+    sectionthree.broadcast();
+}
+
+//-------------
+spork~one();
+spork~lefthandfirstexercise();
+spork~two();
+spork~righthandfirstexercise();
+
+sectionone => now;
+//-------------
+spork~oneA();
+spork~lefthandsecondexercise();
+spork~twoB();
+spork~righthandsecondexercise();
+
+sectiontwo => now;
+//-------------
+spork~oneC();
+spork~lefthandthirdexercise();
+spork~twoD();
+spork~righthandthirdexercise();
+
+sectionthree => now;
+
+done.broadcast();
+second => now;
+save.broadcast();
+
+eon =>now;
           `);
         });
 
@@ -88,9 +207,14 @@
   <body>
   <script>
 
-      let result = 0;
-      let result2 = 0;
-      let result3 = 0;
+      let left1 = 0;
+      let left2 = 0;
+      let left3 = 0;
+      let right1 = 0;
+      let right2 = 0;
+      let right3 = 0;
+	  
+
       let fname
       let lname
 
@@ -173,17 +297,29 @@ The experiment will end by itself after the third set. </p><br><br>
       };
 
     function doneCallback() {
-        theChuck.getFloat("total").then( function(val) {
-            result = val;
-            console.log(result);
+        theChuck.getFloat("resultleft1").then( function(val) {
+            left1 = val;
+            console.log(left1);
         });
-        theChuck.getFloat("total2").then( function(val) {
-            result2 = val;
-            console.log(result2);
+        theChuck.getFloat("resultleft2").then( function(val) {
+            left2 = val;
+            console.log(left2);
         });
-        theChuck.getFloat("total3").then( function(val) {
-            result3 = val;
-            console.log(result3);
+        theChuck.getFloat("resultleft3").then( function(val) {
+            left3 = val;
+            console.log(left3);
+        });
+	theChuck.getFloat("resultright1").then( function(val) {
+            right1 = val;
+            console.log(right1);
+        });
+	theChuck.getFloat("resultright2").then( function(val) {
+            right2 = val;
+            console.log(right2);
+        });
+	theChuck.getFloat("resultright3").then( function(val) {
+            right3 = val;
+            console.log(right3);
         });
     }
 
@@ -196,12 +332,18 @@ The experiment will end by itself after the third set. </p><br><br>
       JSONToFile(
       { name: fname,
         lastName: lname,
-        reference1: 18389.7,
-        result1: result,
-        reference2: 33075,
-        result2: result2,
-        reference3: 11025,
-        result3: result3,
+        referenceleft1:,
+       referenceright1:,
+        resultleft1: left1,
+       resultright1: right1,
+        referenceleft2:,
+       referenceright2:,
+        resultleft2: left2,
+       resultright2: right2,
+        referenceleft3:,
+       referenceright3:,
+        resultleft3: left3,
+       resultright3: right3
       }, 'tempo_recall'+fname+lname
     );
     }
