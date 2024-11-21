@@ -149,13 +149,14 @@ The experiment will end by itself after the third set. </p><br><br>
       const intro = document.getElementById("intro");
 
       document.addEventListener("keypress", function(event) {
-        if (event.code === 'Space') {
-          theChuck.broadcastEvent("keypressed");
+        if (event.code === 'KeyE') {
+          //theChuck.broadcastEvent("keypressed");
+		console.log ('E')
         }
-		if (event.code === 'W') {
-          theChuck.broadcastEvent("keypressed");
+		if (event.code === 'KeyO') {
+          //theChuck.broadcastEvent("keypressed");
+		console.log ('O')	
         }
-		console.log (event.code)
       });
 
 
