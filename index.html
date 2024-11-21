@@ -61,7 +61,7 @@ float resultright2;
 float resultright3;
 
 fun void one(){
-   repeat(30){
+   repeat(21){
    1 => osc1.gain;
    .2::second => now;
    0 => osc1.gain;
@@ -71,7 +71,7 @@ fun void one(){
 }
 
 fun void two(){
-   repeat(20){
+   repeat(14){
    1 => osc2.gain;
    .3::second => now;
    0 => osc2.gain;
@@ -80,7 +80,7 @@ fun void two(){
 }
 
 fun void oneA(){
-   repeat(20){
+   repeat(30){
    1 => osc1.gain;
    .15::second => now;
    0 => osc1.gain;
@@ -89,7 +89,7 @@ fun void oneA(){
 }
 
 fun void twoB(){
-   repeat(10){
+   repeat(15){
    1 => osc2.gain;
    .3::second => now;
    0 => osc2.gain;
@@ -222,7 +222,7 @@ eon =>now;
       const element = document.createElement('div');
       element.innerHTML = `
       <div class="container-md mt-3 border" id="intro">
-        <p class="h1 text-center" >How well do you recall tempo?</p><br><br>
+        <p class="h1 text-center" >How well do musicians retain multiple tempos?</p><br><br>
         <p class="h4 text-center"><b>WARNING</b> use earpods or headphones</p>
         <p class="h5 text-center">Take the volume of your computer all the way down, then press the "Start Test" button and increase the volume until you reach a confortable level.</p><br><br>
         <div class="row">
@@ -258,8 +258,8 @@ eon =>now;
       test.innerHTML = `
         <div class="container-md mt-3 border" id="test" >
         <p class="h4 text-center"><b>WARNING</b> After you hit start don't change the volume of your device</p><br><br>
-        <p class="h5 text-center">When you press 'start' you will hear eight ticks.
-When the last tick stops use the space bar to keep tapping at the same tempo.
+        <p class="h5 text-center">When you press 'start' you will hear two tempos played at the same time, one in each ear, for fifteen ticks.
+When the last tick stops use the E key for the left ear and O key for the right ear to keep tapping at the same tempo.
 After 16 taps the computer tick will start again at a new tempo.
 Repeat three times.
 The experiment will end by itself after the third set. </p><br><br>
