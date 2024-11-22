@@ -33,12 +33,15 @@
         theChuck.startListeningForEvent("done", doneCallback);
         theChuck.startListeningForEvent("save", saveCallback);
         theChuck.runCode(`
-          /* Play a sine wave at 440Hz for 1 week */
-SinOsc osc1 => dac;
+
+SinOsc osc1 => dac.chan(0);
 330 => osc1.freq;
 
-SinOsc osc2 => dac;
+SinOsc osc2 => dac.chan(1);
 660 => osc2.freq;
+
+global Event done;
+global Event save;
 
 global Event sectionone;
 global Event sectiontwo;
@@ -53,12 +56,13 @@ int counterleft2;
 int counterright2;
 int counterleft3;
 int counterright3;
-float resultleft1;
-float resultleft2;
-float resultleft3;
-float resultright1;
-float resultright2;
-float resultright3;
+
+global float resultleft1;
+global float resultleft2;
+global float resultleft3;
+global float resultright1;
+global float resultright2;
+global float resultright3;
 
 fun void one(){
    repeat(21){
@@ -66,8 +70,8 @@ fun void one(){
    .2::second => now;
    0 => osc1.gain;
    .2::second => now;
-   } 
-   
+   }
+
 }
 
 fun void two(){
@@ -76,7 +80,7 @@ fun void two(){
    .3::second => now;
    0 => osc2.gain;
    .3::second => now;
-   } 
+   }
 }
 
 fun void oneA(){
@@ -85,7 +89,7 @@ fun void oneA(){
    .15::second => now;
    0 => osc1.gain;
    .15::second => now;
-   }  
+   }
 }
 
 fun void twoB(){
@@ -94,7 +98,7 @@ fun void twoB(){
    .3::second => now;
    0 => osc2.gain;
    .3::second => now;
-   } 
+   }
 }
 
 fun void oneC(){
@@ -103,7 +107,7 @@ fun void oneC(){
    .3::second => now;
    0 => osc1.gain;
    .3::second => now;
-   } 
+   }
 }
 
 fun void twoD(){
@@ -112,7 +116,7 @@ fun void twoD(){
    .4::second => now;
    0 => osc2.gain;
    .4::second => now;
-   } 
+   }
 }
 
 fun void lefthandfirstexercise(){
@@ -194,6 +198,17 @@ spork~righthandthirdexercise();
 
 sectionthree => now;
 
+//--------------------------------------------------------------------
+float temp;
+for(int i; i < counterleft1; i++){
+    // the only thing that is missing is:
+    // use this code to do the average stored in E and O taking into account the counters
+    // do it for both hands
+    // hint, check the examples
+}
+//--------------------------------------------------------------------
+
+
 done.broadcast();
 second => now;
 save.broadcast();
@@ -213,7 +228,7 @@ eon =>now;
       let right1 = 0;
       let right2 = 0;
       let right3 = 0;
-	  
+
 
       let fname
       let lname
@@ -274,12 +289,10 @@ The experiment will end by itself after the third set. </p><br><br>
 
       document.addEventListener("keypress", function(event) {
         if (event.code === 'KeyE') {
-          //theChuck.broadcastEvent("keypressed");
-		console.log ('E')
+            theChuck.broadcastEvent("KeyE");
         }
-		if (event.code === 'KeyO') {
-          //theChuck.broadcastEvent("keypressed");
-		console.log ('O')	
+            if (event.code === 'KeyO') {
+            theChuck.broadcastEvent("KeyO");
         }
       });
 
@@ -309,15 +322,15 @@ The experiment will end by itself after the third set. </p><br><br>
             left3 = val;
             console.log(left3);
         });
-	theChuck.getFloat("resultright1").then( function(val) {
+      theChuck.getFloat("resultright1").then( function(val) {
             right1 = val;
             console.log(right1);
         });
-	theChuck.getFloat("resultright2").then( function(val) {
+      theChuck.getFloat("resultright2").then( function(val) {
             right2 = val;
             console.log(right2);
         });
-	theChuck.getFloat("resultright3").then( function(val) {
+      theChuck.getFloat("resultright3").then( function(val) {
             right3 = val;
             console.log(right3);
         });
@@ -332,25 +345,23 @@ The experiment will end by itself after the third set. </p><br><br>
       JSONToFile(
       { name: fname,
         lastName: lname,
-       referenceleft1:,
-       referenceright1:,
-       resultleft1: left1,
-       resultright1: right1,
-       referenceleft2:,
-       referenceright2:,
-       resultleft2: left2,
-       resultright2: right2,
-       referenceleft3:,
-       referenceright3:,
-       resultleft3: left3,
-       resultright3: right3
+        referenceleft1:8820,
+        referenceright1:13230,
+        resultleft1: left1,
+        resultright1: right1,
+        referenceleft2:6615,
+        referenceright2:13230,
+        resultleft2: left2,
+        resultright2: right2,
+        referenceleft3:13230,
+        referenceright3:17640,
+        resultleft3: left3,
+        resultright3: right3
       }, 'tempo_recall'+fname+lname
     );
     }
-
 
     </script>
     <div class="col"><button id="actualTest" style="display:none" onclick="this.disabled=true">Start Test</button></div>
   </body>
 </html>
-
