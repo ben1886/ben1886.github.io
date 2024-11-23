@@ -203,25 +203,29 @@ sectionthree => now;
 float tempLeft = 0.0;
 float tempRight = 0.0;
 
-// Calculate the sum of the time differences for the left hand (E array)
+<<< "Debug - counterleft1:", counterleft1 >>>;
+<<< "Debug - E array values before averaging:", E >>>;
+
 for (int i = 0; i < counterleft1; i++) {
     if (i > 0) {
         tempLeft += (E[i] - E[i - 1]);
     }
 }
-// Calculate the average for the left hand
+
 resultleft1 = tempLeft / (counterleft1 - 1);
 
-// Calculate the sum of the time differences for the right hand (O array)
+
 for (int i = 0; i < counterright1; i++) {
     if (i > 0) {
         tempRight += (O[i] - O[i - 1]);
     }
 }
-// Calculate the average for the right hand
+
+<<< "Debug - counterright1:", counterright1 >>>;
+<<< "Debug - O array values before averaging:", O >>>;
+
 resultright1 = tempRight / (counterright1 - 1);
 
-// Repeat the same logic for other exercises
 // Section 2
 tempLeft = 0.0;
 tempRight = 0.0;
