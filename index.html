@@ -220,6 +220,43 @@ for (int i = 0; i < counterright1; i++) {
 }
 // Calculate the average for the right hand
 resultright1 = tempRight / (counterright1 - 1);
+
+// Repeat the same logic for other exercises
+// Section 2
+tempLeft = 0.0;
+tempRight = 0.0;
+
+for (int i = 0; i < counterleft2; i++) {
+    if (i > 0) {
+        tempLeft += (E[i] - E[i - 1]);
+    }
+}
+resultleft2 = tempLeft / (counterleft2 - 1);
+
+for (int i = 0; i < counterright2; i++) {
+    if (i > 0) {
+        tempRight += (O[i] - O[i - 1]);
+    }
+}
+resultright2 = tempRight / (counterright2 - 1);
+
+// Section 3
+tempLeft = 0.0;
+tempRight = 0.0;
+
+for (int i = 0; i < counterleft3; i++) {
+    if (i > 0) {
+        tempLeft += (E[i] - E[i - 1]);
+    }
+}
+resultleft3 = tempLeft / (counterleft3 - 1);
+
+for (int i = 0; i < counterright3; i++) {
+    if (i > 0) {
+        tempRight += (O[i] - O[i - 1]);
+    }
+}
+resultright3 = tempRight / (counterright3 - 1);
 //--------------------------------------------------------------------
 
 
