@@ -199,15 +199,27 @@ spork~righthandthirdexercise();
 sectionthree => now;
 
 //--------------------------------------------------------------------
-float temp;
-for(int i; i < counterleft1; i++)
+// Initialize the temporary variable to store the sum
+float tempLeft = 0.0;
+float tempRight = 0.0;
 
-{
-    // the only thing that is missing is:
-    // use this code to do the average stored in E and O taking into account the counters
-    // do it for both hands
-    // hint, check the examples
+// Calculate the sum of the time differences for the left hand (E array)
+for (int i = 0; i < counterleft1; i++) {
+    if (i > 0) {
+        tempLeft += (E[i] - E[i - 1]);
+    }
 }
+// Calculate the average for the left hand
+resultleft1 = tempLeft / (counterleft1 - 1);
+
+// Calculate the sum of the time differences for the right hand (O array)
+for (int i = 0; i < counterright1; i++) {
+    if (i > 0) {
+        tempRight += (O[i] - O[i - 1]);
+    }
+}
+// Calculate the average for the right hand
+resultright1 = tempRight / (counterright1 - 1);
 //--------------------------------------------------------------------
 
 
