@@ -200,13 +200,37 @@ sectionthree => now;
 
 //--------------------------------------------------------------------
 float temp;
-for(int i; i < counterleft1; i++){
 
-    // the only thing that is missing is:
-    // use this code to do the average stored in E and O taking into account the counters
-    // do it for both hands
-    // hint, check the examples
-}
+for(int i; i < counterleft1; i++){
+(counterleft1[i+1]-counterleft1[i])/samp +=> t;
+              }
+              t/32.0 => t;
+              return t;
+for(int i; i < counterright1; i++){
+(counterright1[i+1]-counterright1[i])/samp +=> t;
+              }
+              t/32.0 => t;
+              return t;
+for(int i; i < counterleft2; i++){
+(counterleft2[i+1]-counterleft2[i])/samp +=> t;
+              }
+              t/32.0 => t;
+              return t;
+for(int i; i < counterright2; i++){
+(counterright2[i+1]-counterright2[i])/samp +=> t;
+              }
+              t/32.0 => t;
+              return t;
+for(int i; i < counterleft3; i++){
+(counterleft3[i+1]-counterleft3[i])/samp +=> t;
+              }
+              t/32.0 => t;
+              return t;
+for(int i; i < counterright3; i++){
+(counterright3[i+1]-counterright3[i])/samp +=> t;
+              }
+              t/32.0 => t;
+              return t;
 //--------------------------------------------------------------------
 
 
