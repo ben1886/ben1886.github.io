@@ -57,12 +57,12 @@ int counterright2;
 int counterleft3;
 int counterright3;
 
-global float resultleft1;
-global float resultleft2;
-global float resultleft3;
-global float resultright1;
-global float resultright2;
-global float resultright3;
+//global float resultleft1;
+//global float resultleft2;
+//global float resultleft3;
+//global float resultright1;
+//global float resultright2;
+//global float resultright3;
 
 fun void one(){
    repeat(21){
@@ -119,98 +119,129 @@ fun void twoD(){
    }
 }
 
-fun void lefthandfirstexercise(){
- while(counterleft1 < 16){
-    E << now;
-    KeyE => now;
-    E << now;
-    counterleft1++;
+// Declare arrays for event timestamps
+time eventTimesLeft1[16], eventTimesRight1[16];
+time eventTimesLeft2[16], eventTimesRight2[16];
+time eventTimesLeft3[16], eventTimesRight3[16];
+
+// Declare global results to store average intervals
+global float resultLeft1, resultRight1;
+global float resultLeft2, resultRight2;
+global float resultLeft3, resultRight3;
+
+// Function to calculate the average interval between timestamps
+fun float calculateAverageInterval(time eventTimes[]) {
+    time totalInterval;
+    0 => totalInterval;
+
+    for (int i = 0; i < eventTimes.size() - 1; i++) {
+        totalInterval += (eventTimes[i+1] - eventTimes[i]);
+    }
+
+    // Convert totalInterval to seconds and divide by the number of intervals
+    return (totalInterval / samp) / (eventTimes.size() - 1);
+}
+
+// Left-hand exercise for first section
+fun void lefthandfirstexercise() {
+    int i = 0;
+    while (i < eventTimesLeft1.size()) {
+        E << now;
+        KeyE => now;
+        now => eventTimesLeft1[i];
+        i++;
     }
 }
 
-fun void righthandfirstexercise(){
- while(counterright1 < 16){
-    O << now;
-    KeyO => now;
-    O << now;
-    counterright1++;
+// Right-hand exercise for first section
+fun void righthandfirstexercise() {
+    int i = 0;
+    while (i < eventTimesRight1.size()) {
+        O << now;
+        KeyO => now;
+        now => eventTimesRight1[i];
+        i++;
     }
-    sectionone.broadcast();
+    sectionone.broadcast(); // Signal that this section is done
 }
 
-fun void lefthandsecondexercise(){
- while(counterleft2 < 16){
-    E << now;
-    KeyE => now;
-    E << now;
-    counterleft2++;
-    }
-}
-
-fun void righthandsecondexercise(){
- while(counterright2 < 16){
-    O << now;
-    KeyO => now;
-    O << now;
-    counterright2++;
-    }
-     sectiontwo.broadcast();
-}
-
-fun void lefthandthirdexercise(){
- while(counterleft3 < 16){
-    E << now;
-    KeyE => now;
-    E << now;
-    counterleft3++;
+// Left-hand exercise for second section
+fun void lefthandsecondexercise() {
+    int i = 0;
+    while (i < eventTimesLeft2.size()) {
+        E << now;
+        KeyE => now;
+        now => eventTimesLeft2[i];
+        i++;
     }
 }
 
-fun void righthandthirdexercise(){
- while(counterright3 < 16){
-    O << now;
-    KeyO => now;
-    O << now;
-    counterright3++;
+// Right-hand exercise for second section
+fun void righthandsecondexercise() {
+    int i = 0;
+    while (i < eventTimesRight2.size()) {
+        O << now;
+        KeyO => now;
+        now => eventTimesRight2[i];
+        i++;
     }
-    sectionthree.broadcast();
+    sectiontwo.broadcast(); // Signal that this section is done
 }
 
-//-------------
-spork~one();
-spork~lefthandfirstexercise();
-spork~two();
-spork~righthandfirstexercise();
+// Left-hand exercise for third section
+fun void lefthandthirdexercise() {
+    int i = 0;
+    while (i < eventTimesLeft3.size()) {
+        E << now;
+        KeyE => now;
+        now => eventTimesLeft3[i];
+        i++;
+    }
+}
 
+// Right-hand exercise for third section
+fun void righthandthirdexercise() {
+    int i = 0;
+    while (i < eventTimesRight3.size()) {
+        O << now;
+        KeyO => now;
+        now => eventTimesRight3[i];
+        i++;
+    }
+    sectionthree.broadcast(); // Signal that this section is done
+}
+
+// Events to coordinate sections
+global Event sectionone, sectiontwo, sectionthree;
+
+// Main spork process
+spork ~ lefthandfirstexercise();
+spork ~ righthandfirstexercise();
 sectionone => now;
-//-------------
-spork~oneA();
-spork~lefthandsecondexercise();
-spork~twoB();
-spork~righthandsecondexercise();
 
-sectiontwo => now;
-//-------------
-spork~oneC();
-spork~lefthandthirdexercise();
-spork~twoD();
-spork~righthandthirdexercise();
-
-sectionthree => now;
-
-//--------------------------------------------------------------------
-// Compute and store average intervals for all sections
+// Calculate averages for the first section
 resultLeft1 = calculateAverageInterval(eventTimesLeft1);
 resultRight1 = calculateAverageInterval(eventTimesRight1);
 
+spork ~ lefthandsecondexercise();
+spork ~ righthandsecondexercise();
+sectiontwo => now;
+
+// Calculate averages for the second section
 resultLeft2 = calculateAverageInterval(eventTimesLeft2);
 resultRight2 = calculateAverageInterval(eventTimesRight2);
 
+spork ~ lefthandthirdexercise();
+spork ~ righthandthirdexercise();
+sectionthree => now;
+
+// Calculate averages for the third section
 resultLeft3 = calculateAverageInterval(eventTimesLeft3);
 resultRight3 = calculateAverageInterval(eventTimesRight3);
 
-// All results are now stored in global variables
+// Done!
 done.broadcast();
+
 //--------------------------------------------------------------------
 
 
