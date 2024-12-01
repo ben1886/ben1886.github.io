@@ -199,14 +199,50 @@ sectionthree => now;
 
 //--------------------------------------------------------------------
 float temp;
-for(int i; i < counterleft1; i++){
-    // the only thing that is missing is:
-    // use this code to do the average stored in E and O taking into account the counters
-    // do it for both hands
-    // hint, check the examples
+
+// Calculate average for left hand (E array)
+for(int i; i < counterleft1; i++) {
+    E[i] => temp;
+    temp +=> resultleft1;
+}
+resultleft1 /=> counterleft1;
+
+// Calculate average for right hand (O array)
+for(int i; i < counterright1; i++) {
+    O[i] => temp;
+    temp +=> resultright1;
+}
+resultright1 /=> counterright1;
+
+// Calculate average for left hand (second exercise)
+for(int i; i < counterleft2; i++) {
+    E[i + counterleft1] => temp;
+    temp +=> resultleft2;
+}
+resultleft2 /=> counterleft2;
+
+// Calculate average for right hand (second exercise)
+for(int i; i < counterright2; i++) {
+    O[i + counterright1] => temp;
+    temp +=> resultright2;
+}
+resultright2 /=> counterright2;
+
+// Calculate average for left hand (third exercise)
+for(int i; i < counterleft3; i++) {
+    E[i + counterleft1 + counterleft2] => temp;
+    temp +=> resultleft3;
+}
+resultleft3 /=> counterleft3;
+
+// Calculate average for right hand (third exercise)
+for(int i; i < counterright3; i++) {
+    O[i + counterright1 + counterright2] => temp;
+    temp +=> resultright3;
+}
+resultright3 /=> counterright3;
 }
 //--------------------------------------------------------------------
-
 
 done.broadcast();
 second => now;
