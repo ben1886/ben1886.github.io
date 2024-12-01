@@ -208,9 +208,9 @@ for(int i; i < E.size(); i++){
       E[i]/samp - resultleft3 -=> resultleft3;
 }
 
-<<< (Math.fabs(resultleft1)-E[0]/samp)/counterleft1 >>>;
-<<< (Math.fabs(resultleft2)-E[0]/samp)/counterleft2 >>>;
-<<< (Math.fabs(resultleft3)-E[0]/samp)/counterleft3 >>>;
+if(counterleft1 > 0) <<< Math.fabs(resultleft1)/counterleft1 >>>;
+if(counterleft2 > counterleft1) <<< Math.fabs(resultleft2)/(counterleft2-counterleft1) >>>;
+if(counterleft3 > counterleft2) <<< Math.fabs(resultleft3)/(counterleft3-counterleft2) >>>;
 
 
 for(int i; i < O.size(); i++){
@@ -222,9 +222,9 @@ for(int i; i < O.size(); i++){
       O[i]/samp - resultright3 -=> resultright3;
 }
 
-<<< (Math.fabs(resultright1)-O[0]/samp)/counterright1 >>>;
-<<< (Math.fabs(resultright2)-O[0]/samp)/counterright2 >>>;
-<<< (Math.fabs(resultright3)-O[0]/samp)/counterright3 >>>;
+if(counterright1 > 0) <<< Math.fabs(resultright1)/counterright1 >>>;
+if(counterright2 > counterright1) <<< Math.fabs(resultright2)/(counterright2-counterright1) >>>;
+if(counterright3 > counterright2) <<< Math.fabs(resultright3)/(counterright3-counterright2) >>>;
 //--------------------------------------------------------------------
 
 done.broadcast();
