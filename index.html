@@ -198,24 +198,47 @@ spork~righthandthirdexercise();
 sectionthree => now;
 
 //--------------------------------------------------------------------
-// Function to calculate average
-fun float calculateAverage(float arr[], int start, int count) {
-    float sum;
-    for(int i; i < count; i++) {
-        sum += arr[start + i];
-    }
-    return count > 0 ? sum / count : 0.0;
+float temp;
+
+// Calculate average for left hand (E array)
+for(int i; i < counterleft1; i++) {
+    E[i] - E[0] => temp;
+    temp +=> resultleft1;
 }
+if(counterleft1 > 0) resultleft1 /=> counterleft1;
 
-// Calculate averages for left hand (E array)
-resultleft1 => calculateAverage(E, 0, counterleft1);
-resultleft2 => calculateAverage(E, 50, counterleft2);
-resultleft3 => calculateAverage(E, 100, counterleft3);
+// Calculate average for right hand (O array)
+for(int i; i < counterright1; i++) {
+    O[i] - O[0] => temp;
+    temp +=> resultright1;
+}
+if(counterright1 > 0) resultright1 /=> counterright1;
 
-// Calculate averages for right hand (O array)
-resultright1 => calculateAverage(O, 0, counterright1);
-resultright2 => calculateAverage(O, 50, counterright2);
-resultright3 => calculateAverage(O, 100, counterright3);
+// Repeat for second exercise
+for(int i; i < counterleft2; i++) {
+    E[i + 16] - E[16] => temp;
+    temp +=> resultleft2;
+}
+if(counterleft2 > 0) resultleft2 /=> counterleft2;
+
+for(int i; i < counterright2; i++) {
+    O[i + 16] - O[16] => temp;
+    temp +=> resultright2;
+}
+if(counterright2 > 0) resultright2 /=> counterright2;
+
+// Repeat for third exercise
+for(int i; i < counterleft3; i++) {
+    E[i + 32] - E[32] => temp;
+    temp +=> resultleft3;
+}
+if(counterleft3 > 0) resultleft3 /=> counterleft3;
+
+for(int i; i < counterright3; i++) {
+    O[i + 32] - O[32] => temp;
+    temp +=> resultright3;
+}
+if(counterright3 > 0) resultright3 /=> counterright3;
 //--------------------------------------------------------------------
 
 done.broadcast();
