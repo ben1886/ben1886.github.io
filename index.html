@@ -33,10 +33,10 @@
         theChuck.startListeningForEvent("save", saveCallback);
         theChuck.runCode(`
 
-SinOsc osc1 => dac.chan(1);;
+SinOsc osc1 => dac.chan(0);;
 330 => osc1.freq;
 
-SinOsc osc2 => dac.chan(0);
+SinOsc osc2 => dac.chan(1);
 660 => osc2.freq;
 
 global Event done;
