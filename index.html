@@ -137,6 +137,44 @@ fun void righthandfirstexercise(){
     sectionone.broadcast();
 }
 
+fun void lefthandsecondexercise(){
+ while(counterleft2 < 16){
+    E << now;
+    KeyE => now;
+    E << now;
+    counterleft2++;
+    }
+}
+
+fun void righthandsecondexercise(){
+ while(counterright2 < 16){
+    O << now;
+    KeyO => now;
+    O << now;
+    counterright2++;
+    }
+     sectiontwo.broadcast();
+}
+
+fun void lefthandthirdexercise(){
+ while(counterleft3 < 16){
+    E << now;
+    KeyE => now;
+    E << now;
+    counterleft3++;
+    }
+}
+
+fun void righthandthirdexercise(){
+ while(counterright3 < 16){
+    O << now;
+    KeyO => now;
+    O << now;
+    counterright3++;
+    }
+    sectionthree.broadcast();
+}
+
 //-------------
 spork~one();
 spork~lefthandfirstexercise();
