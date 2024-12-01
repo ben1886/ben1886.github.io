@@ -1,181 +1,207 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Musician Tempo Retention Test</title>
+  <title>Tempo Retention Test</title>
+  <!-- Bootstrap CSS -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap JavaScript -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script type="module" defer>
     import { Chuck } from 'https://cdn.jsdelivr.net/npm/webchuck/+esm';
 
-    // Ensure code runs after DOM is loaded
-    document.addEventListener("DOMContentLoaded", async function() {
-      // Initialize WebChuck
-      const theChuck = await Chuck.init([]);
+    let theChuck;
+    let testResults = {
+      name: "",
+      lastName: "",
+      leftResults: [],
+      rightResults: []
+    };
 
-      let results = {
-        left1: 0,
-        right1: 0,
-        left2: 0,
-        right2: 0,
-        left3: 0,
-        right3: 0,
-      };
+    document.addEventListener("DOMContentLoaded", async () => {
+      try {
+        console.log("Initializing WebChucK...");
+        theChuck = await Chuck.init([]);
+        console.log("WebChucK initialized.");
+      } catch (err) {
+        console.error("Failed to initialize WebChucK:", err);
+      }
+    });
 
-      let user = {
-        fname: '',
-        lname: '',
-      };
+    // Start the initial sound test
+    document.getElementById('startTest').addEventListener('click', async () => {
+      if (!theChuck) {
+        console.error("WebChucK is not initialized!");
+        return;
+      }
+      console.log("Starting sound test...");
+      theChuck.runCode(`
+        SinOsc leftOsc => dac.chan(0);
+        SinOsc rightOsc => dac.chan(1);
+        440 => leftOsc.freq;
+        660 => rightOsc.freq;
+        1 => leftOsc.gain;
+        1 => rightOsc.gain;
+        2::second => now; // Play for 2 seconds
+        0 => leftOsc.gain;
+        0 => rightOsc.gain;
+      `);
+    });
 
-      // Start Test Button
-      document.getElementById('action').addEventListener('click', () => {
-        theChuck.runCode(`
-          SinOsc sin => dac;
-          1000 => sin.freq;
-          .5::second => now;
-        `);
-      });
+    // Stop any running ChucK code
+    document.getElementById('stopTest').addEventListener('click', () => {
+      if (!theChuck) {
+        console.error("WebChucK is not initialized!");
+        return;
+      }
+      console.log("Stopping test...");
+      theChuck.removeLastCode();
+    });
 
-      // Stop Test Button
-      document.getElementById('stopTest').addEventListener('click', () => {
-        theChuck.removeLastCode();
-      });
+    // Start the full test
+    document.getElementById('actualTest').addEventListener('click', async () => {
+      if (!theChuck) {
+        console.error("WebChucK is not initialized!");
+        return;
+      }
+      console.log("Starting full test...");
+      theChuck.startListeningForEvent("done", doneCallback);
+      theChuck.startListeningForEvent("save", saveCallback);
 
-      // Submit User Info
-      document.getElementById('submitInfo').addEventListener('click', () => {
-        user.fname = document.getElementById('fname').value.trim();
-        user.lname = document.getElementById('lname').value.trim();
-        if (user.fname && user.lname) {
-          document.getElementById('intro').style.display = 'none';
-          document.getElementById('test').style.display = 'block';
-        } else {
-          alert("Please fill out both fields!");
+      // Run the ChucK code for the full test
+      theChuck.runCode(`
+        SinOsc osc1 => dac.chan(0);
+        SinOsc osc2 => dac.chan(1);
+        330 => osc1.freq;
+        660 => osc2.freq;
+
+        global Event done;
+        global Event KeyO;
+        global Event KeyE;
+        
+        // Arrays to record event times
+        time eventTimesLeft[16];
+        time eventTimesRight[16];
+        
+        // Function to calculate average intervals
+        fun float calculateAverageInterval(time eventTimes[]) {
+          time totalInterval;
+          0 => totalInterval;
+
+          for (int i = 0; i < eventTimes.size() - 1; i++) {
+              totalInterval += (eventTimes[i+1] - eventTimes[i]);
+          }
+          return (totalInterval / samp) / (eventTimes.size() - 1); // Return average in seconds
         }
-      });
 
-      // Start Test Execution
-      document.getElementById('startTest').addEventListener('click', async () => {
-        theChuck.startListeningForEvent("done", async () => {
-          results.left1 = await theChuck.getFloat("resultLeft1");
-          results.right1 = await theChuck.getFloat("resultRight1");
-          results.left2 = await theChuck.getFloat("resultLeft2");
-          results.right2 = await theChuck.getFloat("resultRight2");
-          results.left3 = await theChuck.getFloat("resultLeft3");
-          results.right3 = await theChuck.getFloat("resultRight3");
-
-          console.log("Test Results: ", results);
-
-          // Save results and display thank-you message
-          saveResults(user, results);
-        });
-
-        theChuck.runCode(`
-          SinOsc osc1 => dac.chan(0);
-          SinOsc osc2 => dac.chan(1);
-
-          global float resultLeft1, resultRight1, resultLeft2, resultRight2, resultLeft3, resultRight3;
-          global Event done;
-
-          fun float calculateAverageInterval(time events[], int count) {
-            time sum;
-            0 => sum;
-            for (int i = 0; i < count - 1; i++) {
-              sum += events[i + 1] - events[i];
-            }
-            return sum / (count - 1) / samp;
+        // Tapping exercises
+        fun void leftExercise() {
+          for (int i = 0; i < eventTimesLeft.size(); i++) {
+            KeyE => now;
+            now => eventTimesLeft[i];
           }
+        }
 
-          // Simulate test (left and right channels)
-          fun void runTest() {
-            // Section 1
-            osc1.freq(330); osc2.freq(660);
-            1::second => now; // Simulate events
-            15::second => now; // Wait for user taps
-            resultLeft1 = 8820.0; resultRight1 = 13230.0;
-
-            // Section 2
-            osc1.freq(440); osc2.freq(880);
-            1::second => now;
-            15::second => now;
-            resultLeft2 = 6615.0; resultRight2 = 13230.0;
-
-            // Section 3
-            osc1.freq(550); osc2.freq(1100);
-            1::second => now;
-            15::second => now;
-            resultLeft3 = 13230.0; resultRight3 = 17640.0;
-
-            done.broadcast();
+        fun void rightExercise() {
+          for (int i = 0; i < eventTimesRight.size(); i++) {
+            KeyO => now;
+            now => eventTimesRight[i];
           }
+        }
 
-          spork ~ runTest();
-        `);
+        // Main test flow
+        spork ~ leftExercise();
+        spork ~ rightExercise();
+
+        // Wait for user to finish
+        20::second => now;
+
+        // Calculate results
+        global float leftResult = calculateAverageInterval(eventTimesLeft);
+        global float rightResult = calculateAverageInterval(eventTimesRight);
+
+        // Broadcast done
+        done.broadcast();
+      `);
+    });
+
+    // Handle test completion
+    function doneCallback() {
+      console.log("Test completed. Retrieving results...");
+      Promise.all([
+        theChuck.getFloat("leftResult"),
+        theChuck.getFloat("rightResult")
+      ]).then(([left, right]) => {
+        testResults.leftResults.push(left);
+        testResults.rightResults.push(right);
+        console.log("Left Results:", testResults.leftResults);
+        console.log("Right Results:", testResults.rightResults);
       });
+    }
 
-      // Save results as JSON file
-      function saveResults(user, results) {
-        const data = {
-          name: user.fname,
-          lastName: user.lname,
-          referenceLeft1: 8820,
-          referenceRight1: 13230,
-          resultLeft1: results.left1,
-          resultRight1: results.right1,
-          referenceLeft2: 6615,
-          referenceRight2: 13230,
-          resultLeft2: results.left2,
-          resultRight2: results.right2,
-          referenceLeft3: 13230,
-          referenceRight3: 17640,
-          resultLeft3: results.left3,
-          resultRight3: results.right3,
-        };
+    // Handle saving results
+    function saveCallback() {
+      console.log("Saving results...");
+      downloadResults();
+    }
 
-        const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `tempo_recall_${user.fname}_${user.lname}.json`;
-        a.click();
-        URL.revokeObjectURL(url);
+    // Download results as a JSON file
+    function downloadResults() {
+      const blob = new Blob([JSON.stringify(testResults, null, 2)], {
+        type: 'application/json',
+      });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${testResults.name}_${testResults.lastName}_results.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    }
 
-        // Display thank-you message
-        document.getElementById('test').innerHTML = `
-          <div class="container text-center">
-            <h4>Thank you! Your results have been saved.</h4>
-            <p>Upload the downloaded JSON file to Canvas.</p>
-          </div>
-        `;
+    // Capture user information
+    document.getElementById("userForm").addEventListener("submit", (event) => {
+      event.preventDefault();
+      testResults.name = document.getElementById("fname").value;
+      testResults.lastName = document.getElementById("lname").value;
+      console.log("User info saved:", testResults);
+    });
+
+    // Capture keyboard events
+    document.addEventListener("keypress", (event) => {
+      if (event.code === 'KeyE') {
+        theChuck.broadcastEvent("KeyE");
+      }
+      if (event.code === 'KeyO') {
+        theChuck.broadcastEvent("KeyO");
       }
     });
   </script>
 </head>
 <body>
-  <!-- Intro Section -->
-  <div id="intro" class="container text-center">
-    <h1>Musician Tempo Retention Test</h1>
-    <p>Warning: Use headphones for this test.</p>
-    <p>Adjust your computer volume carefully after pressing "Start Test".</p>
-    <button id="action" class="btn btn-primary">Start Test</button>
-    <button id="stopTest" class="btn btn-danger">Stop Test</button>
-    <hr>
-    <div>
-      <label for="fname">First Name:</label>
-      <input type="text" id="fname" placeholder="First Name">
-      <label for="lname">Last Name:</label>
-      <input type="text" id="lname" placeholder="Last Name">
-      <button id="submitInfo" class="btn btn-success">Submit</button>
+  <div class="container mt-5">
+    <h1 class="text-center">Tempo Retention Test</h1>
+    <p class="text-center">
+      Use headphones and adjust your volume to a comfortable level.
+    </p>
+    <form id="userForm" class="mb-4">
+      <div class="mb-3">
+        <label for="fname" class="form-label">First Name</label>
+        <input type="text" id="fname" class="form-control" required>
+      </div>
+      <div class="mb-3">
+        <label for="lname" class="form-label">Last Name</label>
+        <input type="text" id="lname" class="form-control" required>
+      </div>
+      <button type="submit" class="btn btn-primary">Save Info</button>
+    </form>
+    <div class="text-center mb-4">
+      <button id="startTest" class="btn btn-success">Start Sound Test</button>
+      <button id="stopTest" class="btn btn-danger">Stop Test</button>
     </div>
-  </div>
-
-  <!-- Test Section -->
-  <div id="test" class="container text-center" style="display: none;">
-    <h4>Warning: Do not change the volume during the test.</h4>
-    <p>Press 'E' for the left ear and 'O' for the right ear to replicate the tempo after hearing the ticks.</p>
-    <button id="startTest" class="btn btn-primary">Start Test</button>
+    <div class="text-center">
+      <button id="actualTest" class="btn btn-primary">Start Full Test</button>
+    </div>
   </div>
 </body>
 </html>
-
