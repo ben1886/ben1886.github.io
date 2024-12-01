@@ -82,6 +82,42 @@ fun void two(){
    }
 }
 
+fun void oneA(){
+   repeat(30){
+   1 => osc1.gain;
+   .15::second => now;
+   0 => osc1.gain;
+   .15::second => now;
+   }
+}
+
+fun void twoB(){
+   repeat(15){
+   1 => osc2.gain;
+   .3::second => now;
+   0 => osc2.gain;
+   .3::second => now;
+   }
+}
+
+fun void oneC(){
+   repeat(20){
+   1 => osc1.gain;
+   .3::second => now;
+   0 => osc1.gain;
+   .3::second => now;
+   }
+}
+
+fun void twoD(){
+   repeat(15){
+   1 => osc2.gain;
+   .4::second => now;
+   0 => osc2.gain;
+   .4::second => now;
+   }
+}
+
 fun void lefthandfirstexercise(){
  while(counterleft1 < 16){
     E << now;
@@ -108,23 +144,49 @@ spork~two();
 spork~righthandfirstexercise();
 
 sectionone => now;
+//-------------
+spork~oneA();
+spork~lefthandsecondexercise();
+spork~twoB();
+spork~righthandsecondexercise();
+
+sectiontwo => now;
+//-------------
+spork~oneC();
+spork~lefthandthirdexercise();
+spork~twoD();
+spork~righthandthirdexercise();
+
+sectionthree => now;
 
 //--------------------------------------------------------------------
 float temp;
 for(int i; i < E.size(); i++){
     if(i < counterleft1)
       E[i]/samp - resultleft1 -=> resultleft1;
+    if(i >= counterleft1 && i < counterleft2)
+      E[i]/samp - resultleft2 -=> resultleft2;
+    if(i >= counterleft2 && i < counterleft3)
+      E[i]/samp - resultleft3 -=> resultleft3;
 }
 
 if(counterleft1 > 0) <<< Math.fabs(resultleft1)/counterleft1 >>>;
+if(counterleft2 > counterleft1) <<< Math.fabs(resultleft2)/(counterleft2-counterleft1) >>>;
+if(counterleft3 > counterleft2) <<< Math.fabs(resultleft3)/(counterleft3-counterleft2) >>>;
 
 
 for(int i; i < O.size(); i++){
     if(i < counterright1)
       O[i]/samp - resultright1 -=> resultright1;
+    if(i >= counterright1 && i < counterright2)
+      O[i]/samp - resultright2 -=> resultright2;
+    if(i >= counterright2 && i < counterright3)
+      O[i]/samp - resultright3 -=> resultright3;
 }
 
 if(counterright1 > 0) <<< Math.fabs(resultright1)/counterright1 >>>;
+if(counterright2 > counterright1) <<< Math.fabs(resultright2)/(counterright2-counterright1) >>>;
+if(counterright3 > counterright2) <<< Math.fabs(resultright3)/(counterright3-counterright2) >>>;
 //--------------------------------------------------------------------
 
 done.broadcast();
